@@ -9,13 +9,14 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(require('./server/routers/info'))
 
-mongoose.connect(process.env.urlDB, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true }, (err, res) => {
-    if (err) {
-        throw err;
-    } else {
+mongoose.connect
+    (process.env.urlDB, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true },
+    
+    (err, res) => {
+        if (err) throw err; 
         console.log("Base de datos conectada")
     }
-});
+);
 
 app.listen(process.env.PORT, () => {
     console.log("Escuchando en el puerto", process.env.PORT)

@@ -3,64 +3,23 @@ const app = express();
 const Datos = require('../models/info');
 
 
-app.get('/caja', function(req, res) {
-    let desde = req.query.desde || 0;
-    desde = Number(desde);
 
-    let hasta = req.query.hasta || 10;
-    hasta = Number(hasta);
-    let requerimiento = "";
-    let fechita = req.query.fecha || null;
-    let horita = req.query.hora || null;
-    
-    if (fechita === null && horita === null) {
-        requerimiento = {
-
-        }
-    }if (fechita != null && horita != null) {
-        requerimiento = {
-            fecha: fechita,
-            hora: horita
-        }
-    }if (fechita != null && horita === null) {
-        requerimiento = {
-            fecha: fechita
-        }
-    }if (horita != null && fechita === null) {
-        requerimiento = {
-            hora: horita
-        }
-    }
-
-    //console.log(solicitud);
-    Datos.find(requerimiento, 'caja fecha hora')
-        .skip(desde)
-        .limit(hasta)
-        .exec((err, cajas) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                })
-            }
-
-            Datos.count(requerimiento, (err, conteo) => {
-                res.json({
-                    ok: true,
-                    registros: conteo,
-                    cajas
-                })
-            })
-        })
-})
 
 app.post('/caja', function(req, res) {
-    let date = new Date()
     let body = req.body;
+    let fecha = dt.format('Y-m-d');
+    let anio = dt.format('Y');
+    let mes = dt.format('m');
+    let dia = dt.format('d');
+    let hora = date.getHours() + ":" + date.getMinutes()
+
     let info = new Datos({
         caja: body.caja,
-        fecha: date.getDate() + "/" + date.getMonth() + 1 + "/" + date.getFullYear(),
-        hora: date.getHours() + ":" + date.getMinutes()
+        fecha: fecha,
+        anio: anio,
+        mes: mes,
+        dia: dia,
+        hora: hora
     })
     info.save((err, cajaDB) => {
         if (err) {
@@ -100,9 +59,42 @@ app.delete('/caja/:id', function(req, res) {
         }
         res.json({
             ok: true,
-            usuario: regCajaEliminado
+            message: 'Registro eliminado correcto'
         })
     })
+})
+
+app.get('/caja', function(req, res) {
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
+
+    let hasta = req.query.hasta || 20;
+    hasta = Number(hasta);
+    let fecha_inicio = req.body.aniodesde || 2021;
+    fecha_inicio = Number(fecha_inicio);
+
+
+    let requerimientos = req.body.requerimientos || '';
+
+    Datos.find({requerimientos:caja,anio:fecha_inicio}, 'caja fecha hora')
+        .skip(desde)
+        .limit(hasta)
+        .exec((err, cajas) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                })
+            }
+
+            Datos.count({requerimientos:caja,anio:fecha_inicio}, (err, conteo) => {
+                res.json({
+                    ok: true,
+                    registros: conteo,
+                    cajas
+                })
+            })
+        })
 })
 
 module.exports = app
