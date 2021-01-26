@@ -21,7 +21,8 @@ let informacion = new Schema({
     },
     dia: {
         type: String,
-        required: [true, 'El dia es obligatorio'],
+        required: [true, 'El dia es obligatorio']
+    },
     hora: {
         type: String,
         required: [true, "La hora es oblgatorio"]
