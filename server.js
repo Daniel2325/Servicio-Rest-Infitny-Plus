@@ -8,6 +8,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(bodyParser.json())
 app.use(require('./server/routers/info'))
+app.use(require('./server/routers/login'))
+app.use(require('./server/routers/index'))
+app.use(require('./server/routers/usuario'))
 
 mongoose.connect
     (process.env.urlDB, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true },

@@ -2,11 +2,13 @@ const express = require('express');
 const app = express();
 const Datos = require('../models/info');
 const dateTime = require('node-datetime');
+const bcrypt = require('bcrypt');
+const _ = require('underscore');
 
 
+const { verificaToken, verificaAdminRole } = require('../middlewares/autenticación')
 
-
-app.post('/caja', function(req, res) {
+app.post('/caja',[verificaToken, verificaAdminRole], function(req, res) {
     let body = req.body;
     let dt = dateTime.create();
     let date = new Date()
@@ -17,6 +19,10 @@ app.post('/caja', function(req, res) {
     let hora = date.getHours() + ":" + date.getMinutes()
 
     let info = new Datos({
+        nombre: body.nombre,
+        email: body.email,
+        password: bcrypt.hashSync(body.password, 10),
+        role: body.role,
         caja: body.caja,
         fecha: fecha,
         anio: anio,
@@ -42,7 +48,7 @@ app.post('/caja', function(req, res) {
 
 
 
-app.delete('/caja/:id', function(req, res) {
+app.delete('/caja/:id', [verificaToken, verificaAdminRole],function(req, res) {
     let id = req.params.id;
 
     Datos.findByIdAndDelete(id, (err, regCajaEliminado) => {
@@ -67,7 +73,7 @@ app.delete('/caja/:id', function(req, res) {
     })
 })
 
-app.get('/caja', function(req, res) {
+app.get('/caja',[verificaToken, verificaAdminRole], function(req, res) {
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
